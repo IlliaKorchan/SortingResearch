@@ -1,17 +1,25 @@
 package controller.commands;
 
+import controller.services.StringProcessor;
 import model.Sorting;
 import model.sortings.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.Map;
+
 
 public class ExecuteSorting implements Command {
     private List<Sorting> sorters = new ArrayList<>(Arrays.asList(new Bubble(), new Counting(), new Insertion(), new Merge(),
             new Quick(), new Selection(), new Shell(), new Shuttle()));
     private List<Integer> basicAmounts = new ArrayList<>(Arrays.asList(10, 50, 100, 500, 1000, 2500, 5000, 10000));
     private Integer customAmount;
+    private StringProcessor processor = new StringProcessor();
 
     private String sortings;
     private String times;
@@ -58,8 +66,8 @@ public class ExecuteSorting implements Command {
             }
         }
         sendAsMap(results, timesArray);
-        sortings = getArrayString(results);
-        times = getTimeString(timesArray);
+        sortings = processor.getArrayString(results);
+        times = processor.getTimeString(timesArray);
     }
 
     private Integer[] generateArray(int amountOfNumbers) {
@@ -71,39 +79,6 @@ public class ExecuteSorting implements Command {
         return array;
     }
 
-    private String getArrayString(List<String> items) {
-        String result = "[";
-        for(int i = 0; i < items.size(); i++) {
-            result += "\'" + items.get(i) + "\'";
-            if(i < items.size() - 1) {
-                result += ", ";
-            }
-        }
-        result += "]";
-
-        return result;
-    }
-
-    private String getTimeString(BigDecimal[][] times) {
-        String result = "[[";
-        for (int i = 0; i < times.length; i++) {
-            for (int j = 0; j < times[i].length; j++) {
-                result += times[i][j];
-
-                if( j < times[i].length - 1) {
-                    result += ", ";
-                }
-            }
-            result += "]";
-
-            if( i < times.length - 1) {
-                result += ",[";
-            }
-        }
-        result += "]";
-
-        return result;
-    }
 
     private Map<String, BigDecimal[]> sendAsMap(List<String> names, BigDecimal[][] times) {
         toSend = new HashMap<>();
