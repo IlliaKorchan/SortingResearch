@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Quick implements Sorting, Command {
     private final String name = "Quick";
-    private final String ukrName = "Метод швидкого сортування";
+    private final String ukrName = "Метод Швидкого Сортування";
     private long time;
 
     @Override

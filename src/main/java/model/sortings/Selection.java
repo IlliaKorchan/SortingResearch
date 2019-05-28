@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Selection implements Sorting, Command {
     private final String name = "Selection";
-    private final String ukrName = "Метод вибору";
+    private final String ukrName = "Метод Вибору";
     private long time;
 
     @Override

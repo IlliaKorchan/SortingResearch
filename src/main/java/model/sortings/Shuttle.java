@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Shuttle implements Sorting, Command {
     private final String name = "Shuttle";
-    private final String ukrName = "Метод \"човникового\" сортування";
+    private final String ukrName = "Метод \"Човникового\" Сортування";
     private long time;
 
     @Override

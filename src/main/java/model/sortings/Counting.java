@@ -9,7 +9,7 @@ import java.util.Comparator;
 
 public class Counting implements Sorting, Command {
     private final String name = "Counting";
-    private final String ukrName = "Метод підрахунку";
+    private final String ukrName = "Метод Підрахунку";
     private long time;
 
     @Override

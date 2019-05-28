@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Insertion implements Sorting, Command {
     private final String name = "Insertion";
-    private final String ukrName = "Метод вставки";
+    private final String ukrName = "Метод Вставки";
     private long time;
 
     @Override

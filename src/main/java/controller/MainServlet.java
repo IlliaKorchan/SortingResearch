@@ -19,7 +19,7 @@ public class MainServlet extends HttpServlet {
     private Map<String, Command> commands = new HashMap<>();
 
     public void init(){
-        commands.put("main", new BackToMain());
+        commands.put("home", new BackToMain());
         commands.put("starter", new BackToStarter());
         commands.put("execute-sorting" , new ExecuteSorting());
         commands.put("bubble-sorting", new Bubble());
@@ -50,6 +50,11 @@ public class MainServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF8");
 
+        if (req.getParameter("customAmount") != null) {
+            if (req.getParameter("amount") != null) {
+                int amount = Integer.valueOf(req.getParameter("amount"));
+            }
+        }
         doGet(req, resp);
     }
 }

@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 public class Merge implements Sorting, Command {
     private final String name = "Merge";
-    private final String ukrName = "Метод злиття";
+    private final String ukrName = "Метод Злиття";
     private long time;
 
     @Override

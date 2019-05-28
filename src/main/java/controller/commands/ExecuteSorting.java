@@ -5,58 +5,59 @@ import model.sortings.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class ExecuteSorting implements Command {
     private List<Sorting> sorters = new ArrayList<>(Arrays.asList(new Bubble(), new Counting(), new Insertion(), new Merge(),
             new Quick(), new Selection(), new Shell(), new Shuttle()));
+    private List<Integer> basicAmounts = new ArrayList<>(Arrays.asList(10, 50, 100, 500, 1000, 2500, 5000, 10000));
+    private Integer customAmount;
 
     private String sortings;
     private String times;
+    private Map<String, BigDecimal[]> toSend;
 
     @Override
     public String execute(HttpServletRequest req) {
         if (req.getParameter("select") != null) {
-            List<String> chosen;
-            if (req.getParameter("Sorting").contains("All")) {
-                chosen = new ArrayList<>();
-                sorters.stream().forEach(s -> chosen.add(s.getName()));
+            if (req.getParameterValues("Sorting") != null) {
+                List<String> chosen;
+                if (req.getParameter("Sorting").contains("All")) {
+                    chosen = new ArrayList<>();
+                    sorters.stream().forEach(s -> chosen.add(s.getName()));
+                } else {
+                    chosen = new ArrayList(Arrays.asList(req.getParameterValues("Sorting")));
+                }
+                fill(chosen);
+                req.setAttribute("sortings", sortings);
+                req.setAttribute("times", times);
+                req.setAttribute("sortTimes", toSend);
             } else {
-                chosen = new ArrayList(Arrays.asList(req.getParameterValues("Sorting")));
+                return "/WEB-INF/view/ChoosePage.jsp";
             }
-            fill(chosen);
-            req.setAttribute("sortings", sortings);
-            req.setAttribute("times", times);
         }
         return "/WEB-INF/view/SortingResults.jsp";
     }
 
     private void fill(List<String> chosen) {
-        Integer[][] arraysToSort = { generateArray(10),
-                                     generateArray(50),
-                                     generateArray(100),
-                                     generateArray(500),
-                                     generateArray(1000),
-                                     generateArray(2500),
-                                     generateArray(5000),
-                                     generateArray(10000)};
+        List<Integer[]> arraysToSort = new ArrayList<>();
+        createAmounts();
+        basicAmounts.stream().forEach(n -> arraysToSort.add(generateArray(n)));
 
         List<String> results = new ArrayList<>();
-        BigDecimal[][] timesArray = new BigDecimal[chosen.size()][arraysToSort.length];
+        BigDecimal[][] timesArray = new BigDecimal[chosen.size()][arraysToSort.size()];
         for (int i = 0; i < chosen.size(); i++) {
             for (int j = 0; j < sorters.size(); j++) {
                 if (sorters.get(j).getName().equalsIgnoreCase(chosen.get(i))) {
-                    for (int k = 0; k < arraysToSort.length; k++) {
-                        sorters.get(j).sort(arraysToSort[i]);
+                    for (int k = 0; k < arraysToSort.size(); k++) {
+                        sorters.get(j).sort(arraysToSort.get(i));
                         timesArray[i][k] = BigDecimal.valueOf(sorters.get(j).getTime() / 1000000.0);
                     }
                     results.add(sorters.get(j).getUkrName());
                 }
             }
         }
+        sendAsMap(results, timesArray);
         sortings = getArrayString(results);
         times = getTimeString(timesArray);
     }
@@ -89,7 +90,7 @@ public class ExecuteSorting implements Command {
             for (int j = 0; j < times[i].length; j++) {
                 result += times[i][j];
 
-                if( j < times.length - 1) {
+                if( j < times[i].length - 1) {
                     result += ", ";
                 }
             }
@@ -102,5 +103,29 @@ public class ExecuteSorting implements Command {
         result += "]";
 
         return result;
+    }
+
+    private Map<String, BigDecimal[]> sendAsMap(List<String> names, BigDecimal[][] times) {
+        toSend = new HashMap<>();
+        for (int i = 0; i < names.size(); i++) {
+            String name = names.get(i).replaceAll("Метод ", "");
+            toSend.put(name, times[i]);
+        }
+
+        return toSend;
+    }
+
+    private void createAmounts() {
+        if (customAmount != null) {
+            for (int i = 0; i < basicAmounts.size(); i++) {
+                if (customAmount < basicAmounts.get(i)) {
+                    basicAmounts.add(i, customAmount);
+                }
+            }
+        }
+    }
+
+    public void setCustomAmount(int customAmount) {
+        this.customAmount = customAmount;
     }
 }

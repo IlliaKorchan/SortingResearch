@@ -13,6 +13,12 @@
 </head>
 
 <body>
+    <form name="selectAmount" method="post">
+        <input type="checkbox" name="customAmount" checked="checked"
+               onclick="if(this.checked){this.nextSibling.style.display=''}
+               else {this.nextSibling.style.display='none';  this.nextSibling.value='';}">
+        <input type="number" name="amount">
+    </form>
     <h3>Для отримання результатів оберіть алгоритми:</h3>
 
     <form name="checkboxes" method="get" action="${pageContext.request.contextPath}/api/execute-sorting">
@@ -20,7 +26,7 @@
             <legend><input type="checkbox"> Вибрати всі</legend>
             <input type="checkbox" name="Sorting" value="Bubble">
                 <a href="${pageContext.request.contextPath}/api/bubble-sorting" title="Переглянути опис алгоритму">Методом "Бульбашки"</a><br>
-            <input type="checkbox" name="Sorting" value="Selection">
+            <input type="checkbox" name="Sorting" value="Counting">
                 <a href="${pageContext.request.contextPath}/api/counting-sorting" title="Переглянути опис алгоритму">Методом підрахунку</a><br>
             <input type="checkbox" name="Sorting" value="Insertion">
                 <a href="${pageContext.request.contextPath}/api/insertion-sorting" title="Переглянути опис алгоритму">Методом вставки</a><br>
@@ -39,8 +45,8 @@
 
         <input type="submit" name="select" class="b1" value="Сортувати" onclick="if(checkboxCheck(checkboxes.Sorting)); openPage('${pageContext.request.contextPath}/execute-sorting')"/>
     </form>
-    <form name="back" action="${pageContext.request.contextPath}/api/main">
-        <input type="submit" class="b1" value="На головну" onclick="openPage('${pageContext.request.contextPath}/main')"/>
+    <form name="back" action="${pageContext.request.contextPath}/api/home">
+        <input type="submit" class="b1" value="На головну" onclick="openPage('${pageContext.request.contextPath}/home')"/>
     </form>
 
 <script>
