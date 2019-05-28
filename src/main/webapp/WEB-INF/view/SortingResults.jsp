@@ -13,61 +13,83 @@
     </head>
 
     <body>
-        <h3>
-            <c:forEach var="result" items="${requestScope.results}">
-                <c:out value="${result}"/><br>
-            </c:forEach>
-        </h3>
+        <%--<h3>--%>
+            <%--<c:forEach var="result" items="${requestScope.results}">--%>
+                <%--<c:out value="${result}"/><br>--%>
+            <%--</c:forEach>--%>
+        <%--</h3>--%>
+        <%--<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="600" height="70">--%>
+            <%--<polyline points="5,35 5,20, 100,20, 150,35, 295,35, 250,50, 420,50 440,65"--%>
+                      <%--stroke="#b4241b" stroke-width="3" fill="none" />--%>
+        <%--</svg>--%>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <link type="text/css" rel="StyleSheet" href="http://bootstraptema.ru/plugins/2016/shieldui/style.css" />
+        <script src="http://bootstraptema.ru/plugins/jquery/jquery-1.11.3.min.js"></script>
+        <script src="http://bootstraptema.ru/plugins/2016/shieldui/script.js"></script>
+
+        <br><br><br>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+
+                    <!-- График --><div id="chart"></div>
+
+                    <script>
+                        $(function () {
+                            $("#chart").shieldChart({
+                                theme: "light",
+                                primaryHeader: {
+                                    text: "Залежність часу від розміру відсортованого масиву"
+                                },
+                                exportOptions: {
+                                    image: false,
+                                    print: false
+                                },
+                                axisY: [{
+                                    min: 0,
+                                    max: 1,
+                                    title: {
+                                        text: 'Час, с',
+                                        style: {
+                                            color: '#4DB0F5'
+                                        }
+                                    },
+                                    axisTickText: {
+                                        style: {
+                                            color: '#4DB0F5'
+                                        }
+                                    }
+                                }],
+                                dataSeries: [{
+                                    seriesType: 'line',
+                                    axis: 0,
+                                    collectionAlias: ${requestScope.sortings}[0],
+                                    data: ${requestScope.times}[0]
+                                }, {
+                                    seriesType: 'line',
+                                    axis: 1,
+                                    collectionAlias: ${requestScope.sortings}[1],
+                                    data: ${requestScope.times}[1]
+                                }, {
+                                    seriesType: 'line',
+                                    axis: 2,
+                                    collectionAlias: ${requestScope.sortings}[2],
+                                    data: ${requestScope.times}[2]
+                                }]
+                            });
+                        });
+                    </script><!-- /.График -->
+
+                </div><!-- /.col-md-8 col-md-offset-2 -->
+            </div><!-- /.row -->
+        </div><!-- /.container -->
+
         <form method="get" action="${pageContext.request.contextPath}/api/starter">
             <input type="submit" name="clear" class="b1" value="Повернутися" onclick="openPage('${pageContext.request.contextPath}/starter')"/>
         </form>
 
-        <div align="center" id="line_top_x"></div>
     </body>
-
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.charts.load('current', {'packages':['line']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-            var results = ${requestScope.results};
-            var data = new google.visualization.DataTable();
-
-            data.addColumn('number', 'К-ть елементів');
-            data.addColumn('number', 'Guardians of the Galaxy');
-            data.addColumn('number', 'The Avengers');
-            data.addColumn('number', 'Transformers: Age of Extinction');
-
-            data.addRows([
-                [10,  37.8, 80.8, 41.8],
-                [50,  37.8, 80.8, 41.8],
-                [100,  37.8, 80.8, 41.8],
-                [500,  37.8, 80.8, 41.8],
-                [1000,  30.9, 69.5, 32.4],
-                [2500,  30.9, 69.5, 32.4],
-                [5000,  30.9, 69.5, 32.4],
-                [10000,  25.4,   57, 25.7]
-            ]);
-
-            var options = {
-                chart: {
-                    title: 'Залежність часу від кількості елементів у відсортованому масиві',
-                },
-                width: 900,
-                height: 500,
-                axes: {
-                    x: {
-                        0: {side: 'top'}
-                    }
-                }
-            };
-
-            var chart = new google.charts.Line(document.getElementById('line_top_x'));
-
-            chart.draw(data, google.charts.Line.convertOptions(options));
-        }
-    </script>
 
     <style>
         body {

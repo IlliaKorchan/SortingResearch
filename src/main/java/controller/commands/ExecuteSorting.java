@@ -11,62 +11,54 @@ import java.util.List;
 import java.util.Random;
 
 public class ExecuteSorting implements Command {
-    List<Sorting>sorters = new ArrayList<>(Arrays.asList(new Bubble(), new Counting(), new Insertion(), new Merge(),
+    private List<Sorting> sorters = new ArrayList<>(Arrays.asList(new Bubble(), new Counting(), new Insertion(), new Merge(),
             new Quick(), new Selection(), new Shell(), new Shuttle()));
-    List<String> results = new ArrayList<>();
+
+    private String sortings;
+    private String times;
 
     @Override
     public String execute(HttpServletRequest req) {
         if (req.getParameter("select") != null) {
-            if (req.getParameterValues("Sorting") != null) {
-                List<String> chosen;
-                if (req.getParameter("Sorting").contains("All")) {
-                    chosen = new ArrayList<>();
-                    sorters.stream().forEach(s -> chosen.add(s.getName()));
-                } else {
-                    chosen = new ArrayList(Arrays.asList(req.getParameterValues("Sorting")));
-                }
-                fill(chosen);
-                req.setAttribute("results", results);
-                return "/WEB-INF/view/SortingResults.jsp";
+            List<String> chosen;
+            if (req.getParameter("Sorting").contains("All")) {
+                chosen = new ArrayList<>();
+                sorters.stream().forEach(s -> chosen.add(s.getName()));
             } else {
-                String warning = "Не вибрано жодного алгоритму!";
-                req.setAttribute(warning, "warning");
-                return "/WEB-INF/view/ChoosePage.jsp";
+                chosen = new ArrayList(Arrays.asList(req.getParameterValues("Sorting")));
             }
-        } else {
-            String warning = "Не вибрано жодного алгоритму!";
-            return "/WEB-INF/view/ChoosePage.jsp";
+            fill(chosen);
+            req.setAttribute("sortings", sortings);
+            req.setAttribute("times", times);
         }
+        return "/WEB-INF/view/SortingResults.jsp";
     }
 
     private void fill(List<String> chosen) {
-        results.clear();
-        Integer[] array10 = generateArray(10);
-        Integer[] array50 = generateArray(50);
-        Integer[] array100 = generateArray(100);
-        Integer[] array500 = generateArray(500);
-        Integer[] array1000 = generateArray(1000);
-        Integer[] array2500 = generateArray(2500);
-        Integer[] array5000 = generateArray(5000);
-        Integer[] array10000 = generateArray(10000);
+        Integer[][] arraysToSort = { generateArray(10),
+                                     generateArray(50),
+                                     generateArray(100),
+                                     generateArray(500),
+                                     generateArray(1000),
+                                     generateArray(2500),
+                                     generateArray(5000),
+                                     generateArray(10000)};
 
-
+        List<String> results = new ArrayList<>();
+        BigDecimal[][] timesArray = new BigDecimal[chosen.size()][arraysToSort.length];
         for (int i = 0; i < chosen.size(); i++) {
             for (int j = 0; j < sorters.size(); j++) {
                 if (sorters.get(j).getName().equalsIgnoreCase(chosen.get(i))) {
-                    sorters.get(j).sort(smallArray);
-                    long smallTime = sorters.get(j).getTime();
-                    sorters.get(j).sort(mediumArray);
-                    long mediumTime = sorters.get(j).getTime();
-                    sorters.get(j).sort(bigArray);
-                    long bigTime = sorters.get(j).getTime();
-                    results.add(sorters.get(j).getUkrName() + ":" + " 10 елементів: " + BigDecimal.valueOf((double)smallTime / 1000000)
-                                + " мс 1000 елементів: " + BigDecimal.valueOf((double) mediumTime / 1000000)
-                                + " мс 10000 елементів: " + BigDecimal.valueOf((double) bigTime / 1000000) + " мс");
+                    for (int k = 0; k < arraysToSort.length; k++) {
+                        sorters.get(j).sort(arraysToSort[i]);
+                        timesArray[i][k] = BigDecimal.valueOf(sorters.get(j).getTime() / 1000000.0);
+                    }
+                    results.add(sorters.get(j).getUkrName());
                 }
             }
         }
+        sortings = getArrayString(results);
+        times = getTimeString(timesArray);
     }
 
     private Integer[] generateArray(int amountOfNumbers) {
@@ -76,5 +68,39 @@ public class ExecuteSorting implements Command {
             array[i] = random.nextInt(amountOfNumbers * 2);
         }
         return array;
+    }
+
+    private String getArrayString(List<String> items) {
+        String result = "[";
+        for(int i = 0; i < items.size(); i++) {
+            result += "\'" + items.get(i) + "\'";
+            if(i < items.size() - 1) {
+                result += ", ";
+            }
+        }
+        result += "]";
+
+        return result;
+    }
+
+    private String getTimeString(BigDecimal[][] times) {
+        String result = "[[";
+        for (int i = 0; i < times.length; i++) {
+            for (int j = 0; j < times[i].length; j++) {
+                result += times[i][j];
+
+                if( j < times.length - 1) {
+                    result += ", ";
+                }
+            }
+            result += "]";
+
+            if( i < times.length - 1) {
+                result += ",[";
+            }
+        }
+        result += "]";
+
+        return result;
     }
 }
